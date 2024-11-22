@@ -3,8 +3,9 @@ const db = require("./../Config/db");
 
 const usersController = {
   getAll: async (req, res) => {
-    const query = "SELECT * FROM users";
-    db.query(query, (err, results) => {
+    const query1 = "SELECT * FROM users";
+    let data ;
+    db.query(query1, (err, results) => {
       if (err) {
         res.status(500).send({ error: err.message });
       } else {
@@ -12,8 +13,9 @@ const usersController = {
         results.forEach((e) => {
           e.verify ? (e.verify = true) : (e.verify = false);
         });
-        res.send(results);
+        data = results ;
       }
+      res.send(data) ;
     });
   },
   getOne: async (req, res) => {

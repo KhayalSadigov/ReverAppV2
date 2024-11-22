@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Video Upload with Details</title>
+  </head>
+  <body>
+    <h1>Upload Video with Details</h1>
+    <form id="uploadForm" enctype="multipart/form-data">
+      <label for="userID">User ID:</label>
+      <input type="number" id="userID" name="userID" required />
+      <br /><br />
+
+      <label for="subjectID">Subject ID:</label>
+      <input type="number" id="subjectID" name="subjectID" required />
+      <br /><br />
+
+      <label for="videoTitle">Title:</label>
+      <input type="text" id="videoTitle" name="title" required />
+      <br /><br />
+
+      <label for="content">Content:</label>
+      <textarea id="content" name="content" required></textarea>
+      <br /><br />
+
+      <label for="video">Select Video:</label>
+      <input type="file" id="video" name="video" accept="video/*" required />
+      <br /><br />
+
+      <label for="isActive">Is Active:</label>
+      <select id="isActive" name="isActive" required>
+        <option value="true">Yes</option>
+        <option value="false">No</option>
+      </select>
+      <br /><br />
+
+      <label for="isDelete">Is Delete:</label>
+      <select id="isDelete" name="isDelete" required>
+        <option value="true">Yes</option>
+        <option value="false">No</option>
+      </select>
+      <br /><br />
+
+      <label for="likes">Likes:</label>
+      <input type="number" id="likes" name="likes" value="0" required />
+      <br /><br />
+
+      <button type="submit">Upload</button>
+    </form>
+    <p id="responseMessage"></p>
+
+    <script>
+      const form = document.getElementById("uploadForm");
+      const responseMessage = document.getElementById("responseMessage");
+
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const isActive = document.getElementById("isActive").value
+          ? true
+          : false;
+        const isDelete = document.getElementById("isDelete").value
+          ? true
+          : false;
+        const createdAt = new Date();
+        const formData = new FormData();
+        formData.append("userID", document.getElementById("userID").value);
+        formData.append(
+          "subjectID",
+          document.getElementById("subjectID").value
+        );
+        formData.append("title", document.getElementById("videoTitle").value);
+        formData.append("content", document.getElementById("content").value);
+        formData.append("createdAt", createdAt);
+        formData.append("video", document.getElementById("video").files[0]);
+        formData.append("isActive", isActive);
+        formData.append("isDelete", isDelete);
+        formData.append("likes", document.getElementById("likes").value);
+
+        try {
+          const response = await fetch("http://localhost:5000/api/videos", {
+            method: "POST",
+            body: formData,
+          });
+
+          const data = await response.json();
+          if (response.ok) {
+            responseMessage.textContent = `Success: ${data.message}`;
+          } else {
+            responseMessage.textContent = `Error: ${data.message}`;
+          }
+        } catch (error) {
+          responseMessage.textContent = `Error: ${error.message}`;
+        }
+      });
+    </script>
+  </body>
+</html>
